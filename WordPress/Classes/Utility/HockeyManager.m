@@ -1,13 +1,13 @@
 #import "HockeyManager.h"
 
 #ifdef HOCKEYAPP_ENABLED
-#import "WordPressAppDelegate.h"
+@import HockeySDK;
+
 #import "ApiCredentials.h"
+#import "WordPressAppDelegate.h"
 #import "WPLogger.h"
-#import <HockeySDK/HockeySDK.h>
 
 @interface HockeyManager () <BITHockeyManagerDelegate>
-
 @end
 
 @implementation HockeyManager
@@ -16,11 +16,13 @@
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:[ApiCredentials hockeyappAppId]
                                                            delegate:self];
     [[BITHockeyManager sharedHockeyManager].authenticator setIdentificationType:BITAuthenticatorIdentificationTypeDevice];
-    [[BITHockeyManager sharedHockeyManager] setDisableCrashManager: YES]; //disable crash reporting
     [[BITHockeyManager sharedHockeyManager].updateManager setUpdateSetting: BITUpdateCheckDaily]; // Set up daily notifications on notmandatory updates
     [[BITHockeyManager sharedHockeyManager].updateManager setShowDirectInstallOption: true]; // Show the "direct update" button in the update dialog
     [[BITHockeyManager sharedHockeyManager] startManager];
     [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
+
+    // NB: Relocated this call as per https://github.com/bitstadium/HockeySDK-iOS/issues/517
+    [[BITHockeyManager sharedHockeyManager] setDisableCrashManager: YES]; //disable crash reporting
 }
 
 - (BOOL)handleOpenURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
